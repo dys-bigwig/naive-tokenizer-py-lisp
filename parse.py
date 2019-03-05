@@ -1,27 +1,26 @@
-from lex import lex
+from lex import Lexer
+from more_itertools import peekable
 
-def parse_tokens(program):
-    return parse(lex(program))
 
 def parse(tokens):
-    if len(tokens) == 0:
-        raise SyntaxError
-    token = tokens.pop(0)
-    if token.type == 'L_PAREN':
-        L = []
-        while tokens[0].type != 'R_PAREN':
-            L.append(parse(tokens))
-        tokens.pop(0)
-        return L
-    elif token.type == 'R_PAREN':
-        raise SyntaxError
+    token = next(tokens)
+    if token == None:
+        raise SyntaxError("unexpected EOF")
+    if token == '(':
+        l = []
+        while tokens.peek() != ')':
+            l.append(parse(tokens))
+        next(tokens)
+        return l
+    elif token == ')':
+        raise SyntaxError("why rparen, why")
     else:
-        return atom(token)
+        return token
 
-def atom(token):
-    if token.type == 'NUMBER':
-        return int(token.value)
-    else:
-        return str(token.value)
+def main():
+    l = peekable(Lexer("(+ 3 (- 4 4) (* 1 2))"))
+    print(parse(l))
 
-print(parse_tokens('(+ (- 1 1) (+ 0 0))'))
+
+if __name__ == '__main__':
+    main()
