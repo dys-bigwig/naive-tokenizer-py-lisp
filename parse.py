@@ -1,6 +1,4 @@
 from lex import Lexer
-from more_itertools import peekable
-
 
 def parse(tokens):
     token = next(tokens, None)
