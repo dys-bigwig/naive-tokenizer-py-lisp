@@ -3,22 +3,22 @@ from more_itertools import peekable
 
 
 def parse(tokens):
-    token = next(tokens)
-    if token == None:
+    token = next(tokens, None)
+    if not token:
         raise SyntaxError("unexpected EOF")
     if token == '(':
         l = []
         while tokens.peek() != ')':
             l.append(parse(tokens))
-        next(tokens)
+        next(tokens, None)
         return l
     elif token == ')':
-        raise SyntaxError("why rparen, why")
+        raise SyntaxError("unexpected )")
     else:
         return token
 
 def main():
-    l = peekable(Lexer("(+ 3 (- 4 4) (* 1 2))"))
+    l = Lexer("(+ (* num.A num-B))")
     print(parse(l))
 
 
